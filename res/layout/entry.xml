@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:orientation="vertical">
+    
+    <TextView android:id="@+id/dateHeaderTextView"
+            android:textSize="20px"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:textColorHighlight="#000"
+            android:background="#DDD"
+            android:visibility="visible"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Aug 21, 2010"
+            />
+    
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
+		android:orientation="horizontal">
+      
+		<LinearLayout
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:orientation="vertical"
+			android:layout_weight="2"
+			>
+     
+			<TextView	
+				android:id="@+id/timeTextView"
+				android:layout_width="fill_parent"	
+				android:layout_height="wrap_content"
+				android:textSize="14px"
+				android:text="8/21 14:23" 
+				/>
+			
+			<TextView	
+				android:id="@+id/descriptionTextView"
+				android:layout_width="fill_parent"	
+				android:layout_height="wrap_content"
+				android:textSize="16px"
+				android:text="my description" 
+				/>
+    	</LinearLayout>
+    
+	    <LinearLayout 
+		    xmlns:android="http://schemas.android.com/apk/res/android" 
+		    android:layout_width="fill_parent" 
+		    android:layout_height="fill_parent" 
+		    android:gravity="center_vertical|center_horizontal" 
+		    android:orientation="horizontal"
+		    android:layout_weight="1"
+		    >
+	    
+			<TextView
+				android:id="@+id/minutesTextView"
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+				android:layout_toRightOf="@id/descriptionTextView"
+				android:textSize="20px"
+				android:textStyle="bold"
+			    android:text="1h24m"
+				/>
+		</LinearLayout>
+		
+	</LinearLayout>
+		
+</LinearLayout>

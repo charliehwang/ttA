@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, TimeTracker!</string>
+    <string name="app_name">Time Tracker</string>
+    <string name="title">Title</string>
+    <string name="taskname">Name</string>
+    <string name="description">Description</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="confirm">Confirm</string>
+    <string name="task_insert">Add Task</string>
+    <string name="task_delete">Delete Task</string>
+    <string name="project_insert">Add Project</string>
+    <string name="project_delete">Delete Project</string>
+    <string name="projectname">Name</string>
+    <string name="edit_project">Edit Project</string>
+    <string name="all_task_entries">All Time Entries</string>
+    <string name="entries">entries</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+</resources>
