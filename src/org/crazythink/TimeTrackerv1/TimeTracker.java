@@ -2,8 +2,10 @@ package org.crazythink.TimeTrackerv1;
 
 import java.util.Calendar;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -18,10 +20,12 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class TimeTracker extends ListActivity {
@@ -41,6 +45,7 @@ public class TimeTracker extends ListActivity {
     private Cursor mTasksCursor;
     private Cursor mProjectsCursor;
     private MergeProjectsTasksAdapter adapter;
+    private long selectedRowId;
     
     /** Called when the activity is first created. */
     @Override
@@ -106,7 +111,8 @@ public class TimeTracker extends ListActivity {
     		//Task is currently running - so stop
     		long rowId = c.getLong(c.getColumnIndex(DbAdapter.KEY_ROWID));
     		long startTime = c.getLong(c.getColumnIndex(DbAdapter.KEY_START_TIME));
-    		long entryId = mDbHelper.createEntry("test entry", startTime, taskId);
+    		String description = c.getString(c.getColumnIndex(DbAdapter.KEY_DESCRIPTION));
+    		long entryId = mDbHelper.createEntry(description, startTime, taskId);
     		
     		if(entryId > 0) {
     			Log.v("DEBUG:", "deleted running time entry for task id " + taskId);
@@ -166,10 +172,49 @@ public class TimeTracker extends ListActivity {
 			//Task view clicked
 			Log.v("DEBUG: ", "task entries viewid " + id);
 			
-			//Open entries list activity
-	        i = new Intent(this, Entries.class);
-	        i.putExtra(DbAdapter.KEY_TASK_ID, id);
-	        startActivity(i);
+			Cursor c = mDbHelper.fetchRunningTimeByTask(id);
+	    	if(c != null && c.getCount() == 1 ) {
+	    		//Task is currently running - so open description dialog
+	    		selectedRowId = c.getLong(c.getColumnIndex(DbAdapter.KEY_ROWID));
+	    		String description = c.getString(c.getColumnIndex(DbAdapter.KEY_DESCRIPTION));
+	    		c.close();
+	    		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+	    		alert.setTitle(R.string.description);
+	    		alert.setMessage(R.string.task_description_message);
+	    		//alert.setMessage("editing running entry id " + rowId);
+	    		final EditText input = new EditText(this);
+	    		input.setText(description);
+	    		alert.setView(input);
+	    		
+	    		alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String value = input.getText().toString().trim();
+						Log.d("DEBUG","dialog " + dialog + " which " + which);
+						if(mDbHelper.updateRunningTimeDescription(selectedRowId, value)) {
+							Toast.makeText(getApplicationContext(), "Description '" + value + "' saved", Toast.LENGTH_SHORT).show();
+						}
+					}
+				});
+				
+				alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+				
+				alert.show();
+				
+	    	}
+	    	else {
+	    		//Task is not running - so open entries list activity
+		        i = new Intent(this, Entries.class);
+		        i.putExtra(DbAdapter.KEY_TASK_ID, id);
+		        startActivity(i);
+	    	}
 		}
 		else
 			Log.e("ERROR: ", "unknown viewId " + vId);

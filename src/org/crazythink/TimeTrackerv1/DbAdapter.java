@@ -92,6 +92,7 @@ public class DbAdapter {
     	+ "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
     	+ "uuid CHAR(36) NOT NULL, "
     	+ "start_time LONG NOT NULL, "
+    	+ "description TEXT, "
     	+ "changed BOOL NOT NULL, "
     	+ "task_id INTEGER, "
     	+ "FOREIGN KEY (task_id) REFERENCES tasks(_id) ON DELETE CASCADE"
@@ -102,7 +103,7 @@ public class DbAdapter {
     private static final String DATABASE_TABLE_PROJECTS = "projects";
     private static final String DATABASE_TABLE_ENTRIES = "entries";
     private static final String DATABASE_TABLE_RUNNINGTIMES = "runningtimes";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private final Context mCtx;
 
@@ -138,13 +139,22 @@ public class DbAdapter {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-                    + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_RUNNINGTIMES);
-            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_ENTRIES);
-            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_TASKS);
-            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_PROJECTS);
-            onCreate(db);
+        	if (oldVersion == 3 && newVersion == 4) {
+        		Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+	                    + newVersion + ", which will destroy running time data");
+        		db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_RUNNINGTIMES);
+        		Log.v("DEBUG: ", "DbAdapter: onCreate runningitems: " + DATABASE_CREATE_RUNNINGTIMES);
+                db.execSQL(DATABASE_CREATE_RUNNINGTIMES);
+        	}
+        	else {
+	            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+	                    + newVersion + ", which will destroy all old data");
+	            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_RUNNINGTIMES);
+	            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_ENTRIES);
+	            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_TASKS);
+	            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_PROJECTS);
+	            onCreate(db);
+        	}
         }
     }
 
@@ -530,10 +540,26 @@ public class DbAdapter {
         
         Long now = Calendar.getInstance().getTime().getTime();
         initialValues.put(KEY_START_TIME, now);
+        initialValues.put(KEY_DESCRIPTION, "");
         
         initialValues.put(KEY_CHANGED, 0);
 
         return mDb.insert(DATABASE_TABLE_RUNNINGTIMES, null, initialValues);
+    }
+    
+    /**
+     * Update the running time using the details provided. The entry to be updated is
+     * specified using the rowId
+     * 
+     * @param rowId id of running time to update
+     * @param description value to set running time description to
+     * @return true if the running time was successfully updated, false otherwise
+     */
+    public boolean updateRunningTimeDescription(long rowId, String description) {
+        ContentValues args = new ContentValues();
+        args.put(KEY_DESCRIPTION, description);
+
+        return mDb.update(DATABASE_TABLE_ENTRIES, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
     /**
@@ -555,7 +581,7 @@ public class DbAdapter {
     public Cursor fetchAllRunningTimes() {
 
         return mDb.query(DATABASE_TABLE_RUNNINGTIMES, new String[] {KEY_ROWID, KEY_UUID,
-                KEY_START_TIME, KEY_TASK_ID}, 
+                KEY_START_TIME, KEY_DESCRIPTION, KEY_TASK_ID}, 
                 null, null, null, null, KEY_NAME + " ASC");
     }
     /**
@@ -570,7 +596,7 @@ public class DbAdapter {
         Cursor mCursor =
 
             mDb.query(true, DATABASE_TABLE_RUNNINGTIMES, new String[] {KEY_ROWID,
-                    KEY_UUID, KEY_START_TIME, KEY_TASK_ID}, 
+                    KEY_UUID, KEY_START_TIME, KEY_DESCRIPTION, KEY_TASK_ID}, 
                     KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
@@ -591,7 +617,7 @@ public class DbAdapter {
         Cursor mCursor =
 
             mDb.query(true, DATABASE_TABLE_RUNNINGTIMES, new String[] {KEY_ROWID,
-                    KEY_UUID, KEY_START_TIME, KEY_TASK_ID}, 
+                    KEY_UUID, KEY_START_TIME, KEY_DESCRIPTION, KEY_TASK_ID}, 
                     KEY_TASK_ID + "=" + taskId, null,
                     null, null, null, null);
         if (mCursor != null) {
