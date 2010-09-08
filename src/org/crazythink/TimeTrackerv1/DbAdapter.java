@@ -559,7 +559,7 @@ public class DbAdapter {
         ContentValues args = new ContentValues();
         args.put(KEY_DESCRIPTION, description);
 
-        return mDb.update(DATABASE_TABLE_ENTRIES, args, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.update(DATABASE_TABLE_RUNNINGTIMES, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
     /**

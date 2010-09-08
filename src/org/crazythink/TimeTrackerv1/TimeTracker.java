@@ -177,7 +177,6 @@ public class TimeTracker extends ListActivity {
 	    		//Task is currently running - so open description dialog
 	    		selectedRowId = c.getLong(c.getColumnIndex(DbAdapter.KEY_ROWID));
 	    		String description = c.getString(c.getColumnIndex(DbAdapter.KEY_DESCRIPTION));
-	    		c.close();
 	    		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 	    		alert.setTitle(R.string.description);
 	    		alert.setMessage(R.string.task_description_message);
@@ -206,6 +205,7 @@ public class TimeTracker extends ListActivity {
 					}
 				});
 				
+				c.close();
 				alert.show();
 				
 	    	}
