@@ -1,7 +1,31 @@
-<TextView	
-	xmlns:android="http://schemas.android.com/apk/res/android"	
-	android:id="@+id/projectNameTextView"
-	android:layout_width="fill_parent"	
-	android:layout_height="wrap_content"	
-	android:gravity="center"	
-	style="?android:attr/listSeparatorTextViewStyle" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Project"
+    android:layout_width="fill_parent"	
+    android:layout_height="34dp"	
+    >
+
+	<TextView	
+		xmlns:android="http://schemas.android.com/apk/res/android"	
+		android:id="@+id/projectNameTextView"
+		android:layout_width="fill_parent"	
+		android:layout_height="fill_parent"
+		android:gravity="left|center"	
+		style="@style/Project"
+		/>
+
+	<View 
+		android:id="@+id/topBorder"
+		android:layout_width="wrap_content"
+		android:layout_height="1dp"
+	    android:layout_alignParentTop="true"
+		android:background="@color/lightDarkBlueBorder"
+	/>
+		
+	<View 
+		android:id="@+id/bottomBorder"
+		android:layout_width="wrap_content"
+		android:layout_height="2dp"
+	    android:layout_alignParentBottom="true"
+		android:background="@color/reallyDarkBlueBorder"
+		/>
+</RelativeLayout>

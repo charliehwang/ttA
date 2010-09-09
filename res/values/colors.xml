@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="lightBlue">#29578e</color>
+	<color name="lightBlueBorder">#466791</color>
+	<color name="darkBlueBorder">#13171d</color>
+
+	<color name="lightGreen">#328174</color>
+	<color name="lightGreenDarkBorder">#262626</color>
+	<color name="lightGreenLightBorder">#599b93</color>
+
+	
+	<color name="darkBlue">#152c48</color>
+	<color name="reallyDarkBlueBorder">#13171d</color>
+	<color name="lightDarkBlueBorder">#1d3d64</color>
+	
+</resources>

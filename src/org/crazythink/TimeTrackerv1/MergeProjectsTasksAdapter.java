@@ -16,7 +16,7 @@ public class MergeProjectsTasksAdapter extends BaseAdapter {
 		this.tasks = tasks;
 	}
 
-	@Override
+//	@Override
 	public Object getItem(int position) {
 		int projectIndex=0;
 		int taskIndex=0;
@@ -46,7 +46,7 @@ public class MergeProjectsTasksAdapter extends BaseAdapter {
 		return(null);
 	}
 
-	@Override
+//	@Override
 	public int getCount() {
 		int count = tasks.cursor.getCount() + projects.cursor.getCount();
 		Log.v("DEBUG:", "getCount return " + count);
@@ -88,7 +88,7 @@ public class MergeProjectsTasksAdapter extends BaseAdapter {
 		return(true);
 	}
 
-	@Override
+//	@Override
 	public View getView(int position, View convertView,
 											ViewGroup parent) {
 		int projectIndex=0;
@@ -122,7 +122,7 @@ public class MergeProjectsTasksAdapter extends BaseAdapter {
 		return(null);
 	}
 
-	@Override
+//	@Override
 	public long getItemId(int position) {
 		int projectIndex=0;
 		int taskIndex=0;

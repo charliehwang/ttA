@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="RunningTask">
+        <item name="android:background">@color/lightGreen</item>      
+    </style>
+
+    <style name="Task">
+        <item name="android:background">@color/lightBlue</item>      
+    </style>
+    
+    <style name="TaskText">
+        <item name="android:textStyle">bold</item>
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:shadowColor">#000</item>
+		<item name="android:shadowDy">-1</item>
+		<item name="android:shadowRadius">0.1</item>
+    </style>
+    
+    <style name="TaskName" parent="TaskText">
+		<item name="android:textSize">17px</item>	
+    </style>
+    
+    <style name="ListViewGeneral">
+    	<item name="android:divider">#000000</item>
+        <item name="android:dividerHeight">0px</item>
+    </style>
+
+	<style name="Project">
+		<item name="android:background">@color/darkBlue</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:shadowColor">#000</item>
+		<item name="android:shadowDy">-1</item>
+		<item name="android:shadowRadius">0.1</item>
+	</style>
+</resources>

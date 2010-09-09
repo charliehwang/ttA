@@ -2,12 +2,15 @@ package org.crazythink.TimeTrackerv1;
 
 import java.util.Calendar;
 
+import org.crazythink.TimeTrackerv1.Utilities.TimeTrackerViewUtility;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -124,7 +127,8 @@ public class TimeTracker extends ListActivity {
     		//Change button text to start
     		btn.setText(R.string.start);
     		//Change background to normal
-    		vParentRow.setBackgroundResource(R.drawable.rows);
+    		TimeTrackerViewUtility.setupTaskView(vParentRow);
+
     		//Stop chronometer (stopwatch) and hide
     		chrono.stop();
     		chrono.setVisibility(View.GONE);
@@ -145,7 +149,7 @@ public class TimeTracker extends ListActivity {
     		
     		//Change button text to Stop and change background to running image
     		btn.setText(R.string.stop);
-    		vParentRow.setBackgroundResource(R.drawable.rows_flat_color);
+    		TimeTrackerViewUtility.setupStartingTaskView(vParentRow);
     		
     		//Hide totalTimeTextView and show chronometer while starting it
     		timetext.setVisibility(View.GONE);
@@ -187,7 +191,7 @@ public class TimeTracker extends ListActivity {
 	    		
 	    		alert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 					
-					@Override
+//					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String value = input.getText().toString().trim();
 						Log.d("DEBUG","dialog " + dialog + " which " + which);
@@ -199,7 +203,7 @@ public class TimeTracker extends ListActivity {
 				
 				alert.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
 					
-					@Override
+//					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.cancel();
 					}
@@ -359,7 +363,7 @@ public class TimeTracker extends ListActivity {
 					//This task is currently running
 					//Set it up with Stop button and chronometer
 		    		btn.setText(R.string.stop);
-		    		v.setBackgroundResource(R.drawable.rows_flat_color);
+		    		TimeTrackerViewUtility.setupStartingTaskView(v);
 		    		
 		    		timeTextView.setVisibility(View.GONE);
 		    		chrono.setVisibility(View.VISIBLE);
@@ -372,7 +376,7 @@ public class TimeTracker extends ListActivity {
 		    		//This task is not running
 		    		//Set up with Start button and no chronometer, but with totalTime
 		    		btn.setText(R.string.start);
-		    		v.setBackgroundResource(R.drawable.rows);
+		    		TimeTrackerViewUtility.setupTaskView(v);
 		    		chrono.setVisibility(View.GONE);
 		    		timeTextView.setVisibility(View.VISIBLE);
 		    	}
