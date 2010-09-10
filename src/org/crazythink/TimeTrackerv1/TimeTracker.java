@@ -168,7 +168,7 @@ public class TimeTracker extends ListActivity {
 		int vId = v.getId();
 		Intent i;
 		
-		if (vId == R.id.projectNameTextView) {
+		if (vId == R.id.projectBody) {
 			//Project view clicked
 			Log.v("DEBUG: ", "edit project viewid " + id);
 		}
@@ -268,12 +268,13 @@ public class TimeTracker extends ListActivity {
         long clickedViewId = Long.valueOf(info.targetView.getId());
         long rowId = info.id;
 
-        if (clickedViewId == R.id.projectNameTextView) {
+        if (clickedViewId == R.id.projectBody) {
         	//Project was long-clicked
-        	TextView clickedView = (TextView)info.targetView;
+        	//TextView clickedView = (TextView)info.targetView;
+        	ViewGroup clickedView = (ViewGroup)info.targetView;
+        	TextView childView = (TextView)clickedView.getChildAt(0);
         	Log.v("DEBUG: ", "long click project id " + rowId);
-        	Log.v("DEBUG: ", "long click viewtype " + clickedView);
-        	menu.setHeaderTitle(clickedView.getText());
+        	menu.setHeaderTitle(childView.getText());
         	menu.add(0, PROJECT_EDIT_ID, 0, R.string.edit_project);
         	menu.add(0, PROJECT_DELETE_ID, 1, R.string.project_delete);
         	menu.add(0, TASK_INSERT_ID, 2, R.string.task_insert);

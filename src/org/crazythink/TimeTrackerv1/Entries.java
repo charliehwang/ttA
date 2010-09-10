@@ -34,7 +34,7 @@ public class Entries extends ListActivity {
         super.onCreate(savedInstanceState);
         mDbHelper = new DbAdapter(this);
         mDbHelper.open();
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_entries);
 
         mTaskId = (savedInstanceState == null) ? null :
         	(Long) savedInstanceState.getSerializable(DbAdapter.KEY_TASK_ID);

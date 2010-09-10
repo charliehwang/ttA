@@ -19,5 +19,5 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="#000000"
-              android:text="No projects.  Press 'Menu' to add a project."/>
+              android:text="No entries."/>
 </LinearLayout>
