@@ -16,7 +16,10 @@
 
 package org.crazythink.TimeTrackerv1;
 
+import java.util.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import android.content.ContentValues;
@@ -41,8 +44,109 @@ public class DbAdapter {
     public static final String KEY_START_TIME_HHMM = "start_time_hhmm";
     public static final String KEY_MINUTES = "minutes";
     public static final String KEY_TASK_ID = "task_id";
-    public static final String KEY_MINUTES_FORMATTED = "minutes_formatted";
     public static final String KEY_DURATION	= "duration_sum";
+    
+    public enum ENTRIES_FILTER {
+    	ALL("All"),
+    	THIS_WEEK("This Week"), 
+    	LAST_WEEK("Last Week"),
+    	THIS_MONTH("This Month"),
+    	LAST_MONTH("Last Month");
+    	
+    	private final String name;
+    	ENTRIES_FILTER (String name) {
+    		this.name = name;
+    	}
+    	
+    	public String getName(){
+    		return this.name;
+    	}
+    	
+    	public static List<String> getList() {
+    		List<String> retList = new ArrayList<String>();
+    		for (ENTRIES_FILTER ef : ENTRIES_FILTER.values()) {
+    			retList.add(ef.getName());
+    		}
+    		return retList;
+    	}
+    	
+    	public static Date getStartDate(int position) {
+    		int days;
+    		Date date = new Date();                      // timestamp now
+    		Calendar cal = Calendar.getInstance();       // get calendar instance
+    		cal.setTime(date);                           // set cal to date
+    		cal.set(Calendar.HOUR_OF_DAY, 0);            // set hour to midnight
+    		cal.set(Calendar.MINUTE, 0);                 // set minute in hour
+    		cal.set(Calendar.SECOND, 0);                 // set second in minute
+    		cal.set(Calendar.MILLISECOND, 0);            // set millis in second
+    		//Date midnight = cal.getTime();				// actually computes the new Date
+    		
+   			if (position == ALL.ordinal()) {
+   				cal.add(Calendar.YEAR,-40);
+   				return cal.getTime();
+   			}
+   			else if (position == THIS_WEEK.ordinal()) {
+   				days = cal.get(Calendar.DAY_OF_WEEK) - 1;
+   				cal.add(Calendar.DATE, -days);
+   				return cal.getTime();
+   			}
+   			else if (position == LAST_WEEK.ordinal()) {
+   				days = cal.get(Calendar.DAY_OF_WEEK) - 1;
+   				cal.add(Calendar.DATE, -(days + 7));
+   				return cal.getTime();
+    		}
+   			else if (position == THIS_MONTH.ordinal()) {
+   				days = cal.get(Calendar.DAY_OF_MONTH) - 1;
+   				cal.add(Calendar.DATE, -(days));
+   				return cal.getTime();
+   			}
+   			else if (position == LAST_MONTH.ordinal()) {
+   				cal.add(Calendar.MONTH, -1);
+   				days = cal.get(Calendar.DAY_OF_MONTH) - 1;
+   				cal.add(Calendar.DATE, -(days));
+   			}
+    		
+    		return cal.getTime();
+    	}
+    	
+    	public static Date getStopDate(int position) {
+    		int days;
+    		Date date = new Date();                      // timestamp now
+    		Calendar cal = Calendar.getInstance();       // get calendar instance
+    		cal.setTime(date);                           // set cal to date
+    		cal.set(Calendar.HOUR_OF_DAY, 0);            // set hour to midnight
+    		cal.set(Calendar.MINUTE, 0);                 // set minute in hour
+    		cal.set(Calendar.SECOND, 0);                 // set second in minute
+    		cal.set(Calendar.MILLISECOND, 0);            // set millis in second
+    		cal.add(Calendar.DATE, 1);
+    		
+   			if (position == ALL.ordinal()) {
+   				return cal.getTime();
+   			}
+   			else if (position == THIS_WEEK.ordinal()) {
+   				return cal.getTime();
+   			}
+   			else if (position == LAST_WEEK.ordinal()) {
+   				days = cal.get(Calendar.DAY_OF_WEEK) - 1;
+   				cal.add(Calendar.DATE, -(days));
+   				return cal.getTime();
+    		}
+   			else if (position == THIS_MONTH.ordinal()) {
+   				return cal.getTime();
+   			}
+   			else if (position == LAST_MONTH.ordinal()) {
+   				days = cal.get(Calendar.DAY_OF_MONTH) - 1;
+   				cal.add(Calendar.DATE, -(days));
+   				return cal.getTime();
+   			}
+    		
+    		return cal.getTime();
+    	}
+    	
+    	
+    }
+
+    
     
 
     private static final String TAG = "TasksDbAdapter";
@@ -112,6 +216,7 @@ public class DbAdapter {
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
             Log.v("DEBUG: ", "DbAdapter: Databasehelper constructor");
+            
         }
         
         @Override
@@ -481,17 +586,21 @@ public class DbAdapter {
      * @return Cursor positioned to matching entries, if found
      * @throws SQLException if entry could not be found/retrieved
      */
-    public Cursor fetchEntriesByTask(long taskId) throws SQLException {
+    public Cursor fetchEntriesByTask(long taskId, int filterSelectedPosition) throws SQLException {
 
+    	long stop_time = ENTRIES_FILTER.getStopDate(filterSelectedPosition).getTime();
+    	long start_time = ENTRIES_FILTER.getStartDate(filterSelectedPosition).getTime();
+    	
+    	//Log.v("DbHelper fetchEntriesByTask","start " + start_time + " stop " + stop_time);
+    	
         Cursor mCursor =
 
             mDb.query(true, DATABASE_TABLE_ENTRIES, new String[] {KEY_ROWID, KEY_UUID,
                     KEY_DESCRIPTION, KEY_LATEST, KEY_MINUTES, KEY_TASK_ID, KEY_START_TIME,
                     "strftime('%m-%d',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_DATE_MMDD, 
-                    "time((start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_TIME_HHMM,
-                    "minutes || 'm' as " + KEY_MINUTES_FORMATTED}, 
-                    KEY_TASK_ID + "=" + taskId, null, null, null, 
-                    KEY_START_TIME + " DESC", null);
+                    "strftime('%H:%M',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_TIME_HHMM},
+                    KEY_TASK_ID + "=" + taskId + " AND start_time > " + start_time + " AND start_time < " + stop_time, 
+                    null, null, null, KEY_START_TIME + " DESC", null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }

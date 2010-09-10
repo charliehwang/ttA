@@ -209,7 +209,6 @@ public class TimeTracker extends ListActivity {
 					}
 				});
 				
-				c.close();
 				alert.show();
 				
 	    	}
@@ -219,9 +218,12 @@ public class TimeTracker extends ListActivity {
 		        i.putExtra(DbAdapter.KEY_TASK_ID, id);
 		        startActivity(i);
 	    	}
+	    	
+	    	c.close();
 		}
 		else
 			Log.e("ERROR: ", "unknown viewId " + vId);
+		
 	}
 	
 	//fillData after return from activity that gives a result
