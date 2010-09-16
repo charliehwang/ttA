@@ -24,7 +24,9 @@
 		android:layout_height="fill_parent"
 		android:layout_below="@id/top_control_bar"
 		android:descendantFocusability="blocksDescendants"
-		android:drawSelectorOnTop="false"/>
+		android:divider="#999999"
+        android:dividerHeight="1px"
+		/>
 	<TextView 
 		android:id="@android:id/empty"
 		android:layout_width="wrap_content"

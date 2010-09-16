@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+	android:id="@+id/RelativeLayout01"
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<TextView 
+		android:id="@+id/entryDateHeaderTextView"
+		android:textSize="20dip"
+		android:textStyle="bold"
+		android:textColor="#000"
+		android:textColorHighlight="#000"
+		android:background="#DDD"
+		android:visibility="visible"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="Aug 21, 2010"
+		/>
+		
+	<TextView 
+		android:id="@+id/entryTaskNameTextView" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:layout_below="@+id/entryDateHeaderTextView"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="3dip"
+		android:textSize="14dip"
+		android:text="project_name :: task name" 
+		/>
+		
+	<TextView 
+		android:id="@+id/entryTimeTextView" 
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:layout_toRightOf="@+id/entryTaskNameTextView" 
+		android:layout_below="@+id/entryDateHeaderTextView"
+		android:layout_alignParentRight="true"
+		android:layout_marginRight="5dip"
+		android:gravity="right"	
+		android:textSize="14dip"
+		android:text="14:23" 
+		/>
+		
+    <LinearLayout 
+	    xmlns:android="http://schemas.android.com/apk/res/android" 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:layout_below="@+id/entryTaskNameTextView"
+	    android:orientation="horizontal"
+	    android:weightSum="1.0"
+	    >
+		
+		<TextView 
+			android:id="@+id/entryDescriptionTextView" 
+			android:layout_width="0dip"
+			android:layout_weight=".75"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="3dip"
+			android:layout_marginBottom="3dip"
+			android:gravity="bottom"
+			android:textSize="16dip"
+			android:text="my description might be very long and it might want to go onto a few lines" 
+			/>
+			
+		<TextView 
+			android:id="@+id/entryMinutesTextView" 
+			android:layout_width="0dip"
+			android:layout_weight=".25"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="5dip"
+			android:layout_marginTop="10dip"
+			android:gravity="right"
+			android:textSize="20dip"
+			android:textStyle="bold"
+			android:text="1h24m"
+			/>
+			
+	</LinearLayout>
+
+</RelativeLayout>

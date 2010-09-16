@@ -13,11 +13,12 @@
     <string name="project_delete">Delete Project</string>
     <string name="projectname">Name</string>
     <string name="edit_project">Edit Project</string>
-    <string name="all_task_entries">All Time Entries</string>
+    <string name="all_task_entries">Time Entries</string>
     <string name="entries">entries</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="task_description_message">Edit task description:</string>
     <string name="empty_entry_list">No entries.</string>
     <string name="filter_spinner_prompt">Filter by:</string>
+    <string name="view_all_entries">View All Entries</string>
 </resources>

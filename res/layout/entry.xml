@@ -38,7 +38,7 @@
 				android:layout_width="fill_parent"	
 				android:layout_height="wrap_content"
 				android:textSize="14px"
-				android:text="8/21 14:23" 
+				android:text="14:23" 
 				/>
 			
 			<TextView	

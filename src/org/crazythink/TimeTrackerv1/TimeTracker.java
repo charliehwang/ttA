@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -43,6 +43,7 @@ public class TimeTracker extends ListActivity {
     private static final int TASK_INSERT_ID = Menu.FIRST + 3;
     private static final int TASK_EDIT_ID = Menu.FIRST + 4;
     private static final int TASK_DELETE_ID = Menu.FIRST + 5;
+    private static final int ENTRIES_VIEW_ALL_ID = Menu.FIRST + 6;
 	
 	private DbAdapter mDbHelper;
     private Cursor mTasksCursor;
@@ -54,6 +55,7 @@ public class TimeTracker extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDbHelper = new DbAdapter(this);
 		mDbHelper.open();
         setContentView(R.layout.main);
@@ -237,17 +239,23 @@ public class TimeTracker extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(0, PROJECT_INSERT_ID, 0, R.string.project_insert);
+        menu.add(0, PROJECT_INSERT_ID, 0, R.string.project_insert).setIcon(android.R.drawable.ic_menu_add);
+        menu.add(0, ENTRIES_VIEW_ALL_ID, 1, R.string.view_all_entries).setIcon(android.R.drawable.ic_menu_view);
         return true;
     }
     
     //Handle menu selection click
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    	Intent i;
         switch(item.getItemId()) {
             case PROJECT_INSERT_ID:
-                Intent i = new Intent(this, ProjectEdit.class);
+                i = new Intent(this, ProjectEdit.class);
                 startActivityForResult(i, ACTIVITY_PROJECT_CREATE);
+                return true;
+            case ENTRIES_VIEW_ALL_ID:
+		        i = new Intent(this, Entries.class);
+		        startActivity(i);
                 return true;
         }
 
@@ -387,13 +395,7 @@ public class TimeTracker extends ListActivity {
 				
 				//Receive minutes as int - change to show hours and minutes
 				int totalTime = cursor.getInt(cursor.getColumnIndex(DbAdapter.KEY_DURATION));
-				int hours = totalTime / 60;
-				int minutes = totalTime % 60; 
-				String formattedTime;
-				if (hours > 0)
-					formattedTime = hours + "h " + minutes + "m";
-				else
-					formattedTime = minutes + "m";
+				String formattedTime = TimeTrackerViewUtility.formatTime(totalTime);
 				timeTextView.setText(formattedTime);
 			}
 		}

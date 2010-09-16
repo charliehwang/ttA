@@ -22,5 +22,18 @@ public class TimeTrackerViewUtility {
 		topBorder.setBackgroundResource(R.color.lightBlueBorder);
 		bottomBorder.setBackgroundResource(R.color.darkBlueBorder);
 	}
+	
+	static public String formatTime(int totalMinutes) {
+		int hours = totalMinutes / 60;
+		int minutes = totalMinutes % 60;
+		String formattedTime;
+		if (hours > 0)
+			formattedTime = hours + "h " + minutes + "m";
+		else if (minutes > 0)
+			formattedTime = minutes + "m";
+		else
+			formattedTime = ">1m";
+		return formattedTime;
+	}
 
 }

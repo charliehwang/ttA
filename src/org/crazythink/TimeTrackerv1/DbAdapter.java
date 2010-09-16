@@ -378,6 +378,30 @@ public class DbAdapter {
         return mCursor;
 
     }
+    
+    /**
+     * Return a Cursor positioned at the task that matches the given rowId
+     * 
+     * @param rowId id of task to retrieve
+     * @return Cursor positioned to matching task, if found
+     * @throws SQLException if task could not be found/retrieved
+     */
+    public String getTaskName(long rowId) throws SQLException {
+    	String taskName = "";
+    	
+        Cursor mCursor =
+
+            mDb.query(true, DATABASE_TABLE_TASKS, new String[] {KEY_NAME}, 
+            		KEY_ROWID + "=" + rowId, null,
+                    null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+            taskName = mCursor.getString(mCursor.getColumnIndex(KEY_NAME));
+        }
+        mCursor.close();
+        return taskName;
+
+    }
 
     /**
      * Update the task using the details provided. The task to be updated is
@@ -553,8 +577,27 @@ public class DbAdapter {
     public Cursor fetchAllEntries() {
 
         return mDb.query(DATABASE_TABLE_ENTRIES, new String[] {KEY_ROWID, KEY_UUID,
-                KEY_DESCRIPTION, KEY_START_TIME, KEY_LATEST, KEY_MINUTES, KEY_TASK_ID}, 
+                KEY_DESCRIPTION, KEY_START_TIME, KEY_LATEST, KEY_MINUTES, KEY_TASK_ID,
+                "strftime('%m-%d',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_DATE_MMDD, 
+                "strftime('%H:%M',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_TIME_HHMM}, 
                 null, null, null, null, KEY_START_TIME + " DESC");
+    }
+    
+    /**
+     * Return a Cursor over the list of all entries in the database
+     * 
+     * @return Cursor over all entries
+     */
+    public Cursor fetchAllEntries(int filterSelected) {
+    	long stop_time = ENTRIES_FILTER.getStopDate(filterSelected).getTime();
+    	long start_time = ENTRIES_FILTER.getStartDate(filterSelected).getTime();
+
+        return mDb.query(DATABASE_TABLE_ENTRIES, new String[] {KEY_ROWID, KEY_UUID,
+                KEY_DESCRIPTION, KEY_START_TIME, KEY_LATEST, KEY_MINUTES, KEY_TASK_ID,
+                "strftime('%m-%d',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_DATE_MMDD, 
+                "strftime('%H:%M',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_TIME_HHMM}, 
+                "start_time > " + start_time + " AND start_time < " + stop_time, 
+                null, null, null, KEY_START_TIME + " DESC");
     }
 
     /**
@@ -569,7 +612,9 @@ public class DbAdapter {
         Cursor mCursor =
 
             mDb.query(true, DATABASE_TABLE_ENTRIES, new String[] {KEY_ROWID, KEY_UUID,
-                    KEY_DESCRIPTION, KEY_START_TIME, KEY_LATEST, KEY_MINUTES, KEY_TASK_ID}, 
+                    KEY_DESCRIPTION, KEY_START_TIME, KEY_LATEST, KEY_MINUTES, KEY_TASK_ID,
+                    "strftime('%m-%d',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_DATE_MMDD, 
+                    "strftime('%H:%M',(start_time / 1000), 'unixepoch', 'localtime') as " + KEY_START_TIME_HHMM}, 
                     KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
@@ -583,13 +628,14 @@ public class DbAdapter {
      * Return a Cursor over the list of entries that match the given taskId
      * 
      * @param taskId id of task entries to retrieve
+     * @param filterSelected the position with ENTRIES_FILTER to filter results by
      * @return Cursor positioned to matching entries, if found
      * @throws SQLException if entry could not be found/retrieved
      */
-    public Cursor fetchEntriesByTask(long taskId, int filterSelectedPosition) throws SQLException {
+    public Cursor fetchEntriesByTask(long taskId, int filterSelected) throws SQLException {
 
-    	long stop_time = ENTRIES_FILTER.getStopDate(filterSelectedPosition).getTime();
-    	long start_time = ENTRIES_FILTER.getStartDate(filterSelectedPosition).getTime();
+    	long stop_time = ENTRIES_FILTER.getStopDate(filterSelected).getTime();
+    	long start_time = ENTRIES_FILTER.getStartDate(filterSelected).getTime();
     	
     	//Log.v("DbHelper fetchEntriesByTask","start " + start_time + " stop " + stop_time);
     	
@@ -622,13 +668,52 @@ public class DbAdapter {
         args.put(KEY_DESCRIPTION, description);
         args.put(KEY_START_TIME, startTime);
         
-        //Calendar calendar = Calendar.getInstance();
-        //java.util.Date now = calendar.getTime();
-        //args.put(KEY_LATEST, now.getTime());
         Long now = Calendar.getInstance().getTime().getTime();
         args.put(KEY_LATEST, now);
 
         return mDb.update(DATABASE_TABLE_ENTRIES, args, KEY_ROWID + "=" + rowId, null) > 0;
+    }
+    
+    public int getTotalTime(long taskId, int filterSelected) {
+    	long stop_time = ENTRIES_FILTER.getStopDate(filterSelected).getTime();
+    	long start_time = ENTRIES_FILTER.getStartDate(filterSelected).getTime();
+    	int ret = 0;
+    	
+    	//Log.v("DbHelper fetchEntriesByTask","start " + start_time + " stop " + stop_time);
+    	
+        Cursor mCursor =
+
+            mDb.query(true, DATABASE_TABLE_ENTRIES, new String[] {
+                    "sum(" + KEY_MINUTES + ") as " + KEY_DURATION},
+                    KEY_TASK_ID + "=" + taskId + " AND start_time > " + start_time + " AND start_time < " + stop_time, 
+                    null, null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+            ret = mCursor.getInt(mCursor.getColumnIndex(KEY_DURATION)); 
+        }
+        mCursor.close();
+        return ret;
+    }
+    
+    public int getTotalTime(int filterSelected) {
+    	long stop_time = ENTRIES_FILTER.getStopDate(filterSelected).getTime();
+    	long start_time = ENTRIES_FILTER.getStartDate(filterSelected).getTime();
+    	int ret = 0;
+    	
+    	//Log.v("DbHelper fetchEntriesByTask","start " + start_time + " stop " + stop_time);
+    	
+        Cursor mCursor =
+
+            mDb.query(true, DATABASE_TABLE_ENTRIES, new String[] {
+                    "sum(" + KEY_MINUTES + ") as " + KEY_DURATION},
+                    "start_time > " + start_time + " AND start_time < " + stop_time, 
+                    null, null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+            ret = mCursor.getInt(mCursor.getColumnIndex(KEY_DURATION)); 
+        }
+        mCursor.close();
+        return ret;
     }
     
     /**                         RUNNINGTIMES                            **/
